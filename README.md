@@ -40,8 +40,8 @@ Adds a declarative approach for defining schedulers on the methods RxJava return
     }
 ```
 
-Afterwards you can define that your services uses the custom scheduler or any of the RxJava predefined by annotating
-your methods.
+Afterwards you can define that your bean uses the custom scheduler or any of the RxJava predefined scheduler
+by annotating your methods. This is going to work as long as the return type is either `Observable` or `Single`.
 
 ```
     @Service
