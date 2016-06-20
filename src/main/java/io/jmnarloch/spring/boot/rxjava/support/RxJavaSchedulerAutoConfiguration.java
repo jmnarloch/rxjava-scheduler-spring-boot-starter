@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Jakub Narloch
  */
 @Configuration
-@ConditionalOnProperty(name = "rxjava.scheduler.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "rxjava.schedulers.enabled", matchIfMissing = true)
 public class RxJavaSchedulerAutoConfiguration {
 
     @Bean
