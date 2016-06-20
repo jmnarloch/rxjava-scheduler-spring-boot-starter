@@ -32,7 +32,7 @@ Adds a declarative approach for defining schedulers on the methods RxJava return
     public static class Application {
 
         @Bean
-        public rx.Scheduler customScheduler() {
+        public rx.Scheduler executorScheduler() {
             return Schedulers.from(
                     Executors.newSingleThreadExecutor()
             );
