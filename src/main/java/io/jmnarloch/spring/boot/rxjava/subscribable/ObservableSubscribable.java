@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,12 @@ import rx.Observable;
 import rx.Scheduler;
 
 /**
+ * The wrapper around {@link Observable} allowing for subscribing to specific {@link Scheduler}
  *
+ * @author Jakub Narloch
+ * @see Observable
+ * @see Scheduler
+ * @see Subscribable
  */
 class ObservableSubscribable implements Subscribable {
 
@@ -31,8 +36,7 @@ class ObservableSubscribable implements Subscribable {
 
     @Override
     public Subscribable subscribeOn(Scheduler scheduler) {
-        delegate.subscribeOn(scheduler);
-        return this;
+        return new ObservableSubscribable(delegate.subscribeOn(scheduler));
     }
 
     @Override

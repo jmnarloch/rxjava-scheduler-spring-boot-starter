@@ -26,7 +26,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 sourceCompatibility = 1.7
 
 group = "io.jmnarloch"
-archivesBaseName="rxjava-scheduler-spring-boot-starter"
+archivesBaseName = "rxjava-scheduler-spring-boot-starter"
 
 ext {
     isReleaseVersion = !version.endsWith("SNAPSHOT")
@@ -39,7 +39,7 @@ task wrapper(type: Wrapper) {
 jar {
     manifest {
         attributes 'Implementation-Title': 'rxjava-scheduler-spring-cloud-starter',
-                   'Implementation-Version': version
+                'Implementation-Version': version
     }
 }
 
@@ -53,15 +53,20 @@ compileJava {
 
 dependencies {
 
-    compile (libraries.springBootConfigurationProcessor) {
+    compile(libraries.springBootConfigurationProcessor) {
         ext.optional = true
     }
-    compile (libraries.springBootAop)
-    compile (libraries.rxJava)
+    compile(libraries.springBootAop)
+    compile(libraries.rxJava)
 
-    testCompile (libraries.springBootTest)
-    testCompile (libraries.junit)
-    testCompile (libraries.mockito)
+    testCompile(libraries.springBootTest)
+    testCompile(libraries.springBootWeb)
+    testCompile(libraries.junit)
+    testCompile(libraries.mockito)
+    testCompile(libraries.powerMockMockito)
+    testCompile(libraries.powerMockJUnit)
+    testCompile(libraries.powerMockRule)
+    testCompile(libraries.powerMockClassloading)
 }
 
 findbugs {

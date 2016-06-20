@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmnarloch.spring.boot.rxjava.subscribable;
+package io.jmnarloch.spring.boot.rxjava.utils;
 
-import rx.Scheduler;
+import rx.Observable;
+import rx.Single;
 
 /**
- * An abstraction for applying a scheduler to the RxJava reactive type.
+ * The RxJava utility class.
  *
  * @author Jakub Narloch
  */
-public interface Subscribable {
+public final class RxJavaUtils {
 
-    Subscribable subscribeOn(Scheduler scheduler);
+    private RxJavaUtils() {
+    }
 
-    Object unwrap();
+    public static boolean isRxJavaType(Class<?> type) {
+
+        return type.equals(Observable.class) || type.equals(Single.class);
+    }
 }

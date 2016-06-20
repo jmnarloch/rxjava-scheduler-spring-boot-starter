@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmnarloch.spring.boot.rxjava.subscribable;
-
-import rx.Scheduler;
+package io.jmnarloch.spring.boot.rxjava.annotation;
 
 /**
- * An abstraction for applying a scheduler to the RxJava reactive type.
+ * Enumerates the possible RxJava schedulers. For reference see the documentation of {@link rx.schedulers.Schedulers}
+ * class.
  *
  * @author Jakub Narloch
  */
-public interface Subscribable {
+public enum Scheduler {
 
-    Subscribable subscribeOn(Scheduler scheduler);
-
-    Object unwrap();
+    IMMEDIATE, TRAMPOLINE, NEW_THREAD, COMPUTATION, IO
 }

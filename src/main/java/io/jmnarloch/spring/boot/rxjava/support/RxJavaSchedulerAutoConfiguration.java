@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +19,17 @@ import io.jmnarloch.spring.boot.rxjava.aspect.RxJavaSubscribeOnAspect;
 import io.jmnarloch.spring.boot.rxjava.aspect.RxJavaSubscribeOnBeanAspect;
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * The configuration for the {@link RxJavaSubscribeOnAspect} and {@link RxJavaSubscribeOnBeanAspect}.
  *
+ * @author Jakub Narloch
  */
 @Configuration
-@ConditionalOnBean(AnnotationAwareAspectJAutoProxyCreator.class)
+@ConditionalOnProperty(name = "rxjava.scheduler.enabled", matchIfMissing = true)
 public class RxJavaSchedulerAutoConfiguration {
 
     @Bean

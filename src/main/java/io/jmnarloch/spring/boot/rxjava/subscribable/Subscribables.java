@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,24 +15,31 @@
  */
 package io.jmnarloch.spring.boot.rxjava.subscribable;
 
+import org.springframework.util.Assert;
 import rx.Observable;
 import rx.Single;
 
 /**
+ * A convenient utility class that allows to wrap a RxJava type like {@link Observable} or {@link Single}
+ * into {@link Subscribable}.
  *
+ * @author Jakub Narloch
  */
 public final class Subscribables {
 
     private Subscribables() {
-
     }
 
     public static Subscribable toSubscribable(Object result) {
+        Assert.notNull(result, "Parameter 'result' can not be null");
         if (result instanceof Observable) {
             return new ObservableSubscribable((Observable) result);
         } else if (result instanceof Single) {
             return new SingleSubscribable((Single) result);
+        } else {
+            throw new IllegalStateException(
+                    String.format("The %s type can not be converted to Subscribable", result.getClass().getName())
+            );
         }
-        throw new IllegalStateException();
     }
 }

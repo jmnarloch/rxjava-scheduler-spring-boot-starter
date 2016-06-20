@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,25 +15,33 @@
  */
 package io.jmnarloch.spring.boot.rxjava.aspect;
 
+import io.jmnarloch.spring.boot.rxjava.annotation.Scheduler;
 import io.jmnarloch.spring.boot.rxjava.annotation.SubscribeOn;
+import io.jmnarloch.spring.boot.rxjava.metadata.AnnotationInspector;
 import io.jmnarloch.spring.boot.rxjava.metadata.MetadataExtractor;
 import io.jmnarloch.spring.boot.rxjava.subscribable.Subscribables;
+import io.jmnarloch.spring.boot.rxjava.utils.RxJavaUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import rx.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.schedulers.Schedulers;
 
-import java.lang.reflect.Method;
-
 import static io.jmnarloch.spring.boot.rxjava.utils.AopUtils.getJointPointMethod;
+import static io.jmnarloch.spring.boot.rxjava.utils.AopUtils.isNull;
 
 /**
+ * The aspect that subscribes the return value of method annotated with {@link SubscribeOn}.
  *
+ * @author Jakub Narloch
+ * @see SubscribeOn
  */
 @Aspect
 public class RxJavaSubscribeOnAspect {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaSubscribeOnAspect.class);
 
     @Pointcut("@annotation(io.jmnarloch.spring.boot.rxjava.annotation.SubscribeOn)")
     public void rxjavaSubscribeOnPointcut() {
@@ -43,28 +51,20 @@ public class RxJavaSubscribeOnAspect {
     public Object subscribeOnAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
         try {
-            // #1 retrieve method definition
+            final AnnotationInspector<SubscribeOn> inspector = MetadataExtractor.extractFrom(
+                    getJointPointMethod(joinPoint)
+            ).subscribeOn();
+            final Object result = joinPoint.proceed();
 
-            // #2 validate the method prerequisites:
-            // annotations
-            // return type
+            if (isNull(result) || !isValidMethodDefinition(inspector)) {
+                return result;
+            }
 
-            // #3 establish the scheduler types from annotation
-
-            // #4 execute the method
-
-            // #5 schedule on the result
-
-            final Method method = getJointPointMethod(joinPoint);
-
-            final Scheduler scheduler = getScheduler(
-                    MetadataExtractor.extractFrom(method)
-                            .subscribeOn()
-                            .getAnnotation()
-                            .value()
+            final rx.Scheduler scheduler = getScheduler(
+                    inspector.getAnnotation().value()
             );
 
-            return Subscribables.toSubscribable(joinPoint.proceed())
+            return Subscribables.toSubscribable(result)
                     .subscribeOn(scheduler)
                     .unwrap();
         } catch (Throwable exc) {
@@ -72,20 +72,35 @@ public class RxJavaSubscribeOnAspect {
         }
     }
 
-    private Scheduler getScheduler(SubscribeOn.Scheduler value) {
+    private boolean isValidMethodDefinition(AnnotationInspector<SubscribeOn> inspector) {
+        if (!inspector.isAnnotationPresent()) {
+            LOGGER.warn("The @SubscribeOn annotation wasn't present");
+            return false;
+        }
+
+        final Class<?> returnType = inspector.getMethod().getReturnType();
+        if (!RxJavaUtils.isRxJavaType(returnType)) {
+            LOGGER.warn("The @SubscribeOn annotated method return type has to be either Observable or Single");
+            return false;
+        }
+
+        return true;
+    }
+
+    private rx.Scheduler getScheduler(Scheduler value) {
         switch (value) {
             case IMMEDIATE:
                 return Schedulers.immediate();
             case TRAMPOLINE:
                 return Schedulers.trampoline();
-            case NEWTHREAD:
+            case NEW_THREAD:
                 return Schedulers.newThread();
             case COMPUTATION:
                 return Schedulers.computation();
             case IO:
                 return Schedulers.io();
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("The Scheduler definition could not be mapped");
         }
     }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,26 +15,35 @@
  */
 package io.jmnarloch.spring.boot.rxjava.aspect;
 
+import io.jmnarloch.spring.boot.rxjava.annotation.SubscribeOnBean;
+import io.jmnarloch.spring.boot.rxjava.metadata.AnnotationInspector;
 import io.jmnarloch.spring.boot.rxjava.metadata.MetadataExtractor;
 import io.jmnarloch.spring.boot.rxjava.subscribable.Subscribables;
+import io.jmnarloch.spring.boot.rxjava.utils.RxJavaUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import rx.Scheduler;
 
-import java.lang.reflect.Method;
-
 import static io.jmnarloch.spring.boot.rxjava.utils.AopUtils.getJointPointMethod;
+import static io.jmnarloch.spring.boot.rxjava.utils.AopUtils.isNull;
 
 /**
+ * The aspect that subscribes the return value of method annotated with {@link SubscribeOnBean}.
  *
+ * @author Jakub Narloch
+ * @see SubscribeOnBean
  */
 @Aspect
 public class RxJavaSubscribeOnBeanAspect implements ApplicationContextAware {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaSubscribeOnAspect.class);
 
     private ApplicationContext applicationContext;
 
@@ -51,33 +60,40 @@ public class RxJavaSubscribeOnBeanAspect implements ApplicationContextAware {
     public Object subscribeOnBeanAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
         try {
-            // #1 retrieve method definition
+            final AnnotationInspector<SubscribeOnBean> inspector = MetadataExtractor.extractFrom(
+                    getJointPointMethod(joinPoint)
+            ).subscribeOnBean();
+            final Object result = joinPoint.proceed();
 
-            // #2 validate the method prerequisites:
-            // annotations
-            // return type
+            if (isNull(result) || !isValidMethodDefinition(inspector)) {
+                return result;
+            }
 
-            // #3 establish the scheduler types from annotation
-
-            // #4 execute the method
-
-            // #5 schedule on the result
-
-            final Method method = getJointPointMethod(joinPoint);
-
-            final Scheduler scheduler = getScheduler(
-                    MetadataExtractor.extractFrom(method)
-                            .subscribeOnBean()
-                            .getAnnotation()
-                            .value()
+            final rx.Scheduler scheduler = getScheduler(
+                    inspector.getAnnotation().value()
             );
 
-            return Subscribables.toSubscribable(joinPoint.proceed())
+            return Subscribables.toSubscribable(result)
                     .subscribeOn(scheduler)
                     .unwrap();
         } catch (Throwable exc) {
             throw exc;
         }
+    }
+
+    private boolean isValidMethodDefinition(AnnotationInspector<SubscribeOnBean> inspector) {
+        if (!inspector.isAnnotationPresent()) {
+            LOGGER.warn("The @SubscribeOnBean annotation wasn't present");
+            return false;
+        }
+
+        final Class<?> returnType = inspector.getMethod().getReturnType();
+        if (!RxJavaUtils.isRxJavaType(returnType)) {
+            LOGGER.warn("The @SubscribeOnBean annotated method return type has to be either Observable or Single");
+            return false;
+        }
+
+        return true;
     }
 
     private Scheduler getScheduler(String beanName) {
