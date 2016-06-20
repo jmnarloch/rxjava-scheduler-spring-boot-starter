@@ -1,6 +1,6 @@
-# Spring RxJava declarative subscriber
+# Spring Boot Netflix RxJava Declarative Schedulers
 
-> A Spring Boot starter for RxJava integration
+> A Spring Boot starter for RxJava schedulers integration
 
 [![Build Status](https://travis-ci.org/jmnarloch/rxjava-scheduler-spring-cloud-starter.svg?branch=master)](https://travis-ci.org/jmnarloch/rxjava-scheduler-spring-cloud-starter)
 [![Coverage Status](https://coveralls.io/repos/jmnarloch/rxjava-scheduler-spring-cloud-starter/badge.svg?branch=master&service=github)](https://coveralls.io/github/jmnarloch/rxjava-scheduler-spring-cloud-starter?branch=master)

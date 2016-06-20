@@ -37,7 +37,7 @@ uploadArchives {
             pom.project {
                 name 'rxjava-scheduler-spring-cloud-starter'
                 packaging 'jar'
-                description 'Spring Boot Netflix RxJava'
+                description 'Spring Boot Netflix RxJava Declarative Schedulers'
                 url 'https://github.com/jmnarloch/rxjava-scheduler-spring-cloud-starter'
 
                 scm {
