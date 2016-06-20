@@ -38,7 +38,7 @@ task wrapper(type: Wrapper) {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'rxjava-scheduler-spring-cloud-starter',
+        attributes 'Implementation-Title': 'rxjava-scheduler-spring-boot-starter',
                 'Implementation-Version': version
     }
 }

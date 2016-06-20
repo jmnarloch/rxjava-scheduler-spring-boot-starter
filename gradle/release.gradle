@@ -35,15 +35,15 @@ uploadArchives {
             }
 
             pom.project {
-                name 'rxjava-scheduler-spring-cloud-starter'
+                name 'rxjava-scheduler-spring-boot-starter'
                 packaging 'jar'
                 description 'Spring Boot Netflix RxJava Declarative Schedulers'
-                url 'https://github.com/jmnarloch/rxjava-scheduler-spring-cloud-starter'
+                url 'https://github.com/jmnarloch/rxjava-scheduler-spring-boot-starter'
 
                 scm {
-                    connection 'scm:git:https://github.com/jmnarloch/rxjava-scheduler-spring-cloud-starter.git'
-                    developerConnection 'scm:git:https://github.com/jmnarloch/rxjava-scheduler-spring-cloud-starter.git'
-                    url 'https://github.com/jmnarloch/rxjava-scheduler-spring-cloud-starter.git'
+                    connection 'scm:git:https://github.com/jmnarloch/rxjava-scheduler-spring-boot-starter.git'
+                    developerConnection 'scm:git:https://github.com/jmnarloch/rxjava-scheduler-spring-boot-starter.git'
+                    url 'https://github.com/jmnarloch/rxjava-scheduler-spring-boot-starter.git'
                 }
 
                 licenses {

@@ -2,8 +2,8 @@
 
 > A Spring Boot starter for RxJava schedulers integration
 
-[![Build Status](https://travis-ci.org/jmnarloch/rxjava-scheduler-spring-cloud-starter.svg?branch=master)](https://travis-ci.org/jmnarloch/rxjava-scheduler-spring-cloud-starter)
-[![Coverage Status](https://coveralls.io/repos/jmnarloch/rxjava-scheduler-spring-cloud-starter/badge.svg?branch=master&service=github)](https://coveralls.io/github/jmnarloch/rxjava-scheduler-spring-cloud-starter?branch=master)
+[![Build Status](https://travis-ci.org/jmnarloch/rxjava-scheduler-spring-boot-starter.svg?branch=master)](https://travis-ci.org/jmnarloch/rxjava-scheduler-spring-boot-starter)
+[![Coverage Status](https://coveralls.io/repos/jmnarloch/rxjava-scheduler-spring-boot-starter/badge.svg?branch=master&service=github)](https://coveralls.io/github/jmnarloch/rxjava-scheduler-spring-boot-starter?branch=master)
 
 ## Setup
 
@@ -12,7 +12,7 @@ Add the Spring Boot starter to your project:
 ```xml
 <dependency>
   <groupId>io.jmnarloch</groupId>
-  <artifactId>rxjava-scheduler-spring-cloud-starter</artifactId>
+  <artifactId>rxjava-scheduler-spring-boot-starter</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
