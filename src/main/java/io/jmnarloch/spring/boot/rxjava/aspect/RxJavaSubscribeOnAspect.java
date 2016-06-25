@@ -54,22 +54,35 @@ public class RxJavaSubscribeOnAspect {
             final AnnotationInspector<SubscribeOn> inspector = MetadataExtractor.extractFrom(
                     getJointPointMethod(joinPoint)
             ).subscribeOn();
-            final Object result = joinPoint.proceed();
 
-            if (isNull(result) || !isValidMethodDefinition(inspector)) {
-                return result;
+            if(!isValidMethodDefinition(inspector)) {
+                return skip(joinPoint);
             }
-
-            final rx.Scheduler scheduler = getScheduler(
-                    inspector.getAnnotation().value()
-            );
-
-            return Subscribables.toSubscribable(result)
-                    .subscribeOn(scheduler)
-                    .unwrap();
+            return process(inspector, joinPoint);
         } catch (Throwable exc) {
             throw exc;
         }
+    }
+
+    private Object skip(ProceedingJoinPoint joinPoint) throws Throwable {
+        return joinPoint.proceed();
+    }
+
+    private Object process(AnnotationInspector<SubscribeOn> inspector, ProceedingJoinPoint joinPoint) throws Throwable {
+        final Object result = joinPoint.proceed();
+        if (isNull(result)) {
+            return result;
+        }
+        return subscribeOn(inspector, result);
+    }
+
+    private Object subscribeOn(AnnotationInspector<SubscribeOn> inspector, Object result) {
+        final rx.Scheduler scheduler = getScheduler(
+                inspector.getAnnotation().value()
+        );
+        return Subscribables.toSubscribable(result)
+                .subscribeOn(scheduler)
+                .unwrap();
     }
 
     private boolean isValidMethodDefinition(AnnotationInspector<SubscribeOn> inspector) {
